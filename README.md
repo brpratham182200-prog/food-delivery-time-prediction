@@ -41,13 +41,16 @@ This project builds regression models that predict **delivery time in minutes**.
 │   │   ├── weather/              Open-Meteo exports (Feb–Jul 2022 GMT; Jul 2022–2026 IST)
 │   │   └── zomato/               zomato.csv  (not committed – 548 MB, see below)
 │   └── processed/
-│       └── weather_merged.csv    output of src/merge_weather.py
+│       ├── weather_merged.csv    output of src/merge_weather.py
+│       ├── orders_clean.csv      all cleaned orders from 19 Feb 2022 (38,351 rows)
+│       └── model_data.csv        cleaned orders with weather (12,645 rows) – modeling input
 ├── notebooks/
 │   ├── 01_cleaning_merging.ipynb
 │   ├── 02_eda.ipynb
 │   └── 03_modeling.ipynb
 ├── src/
-│   └── merge_weather.py          merges both weather exports into one tidy table
+│   ├── merge_weather.py          merges both weather exports into one tidy table
+│   └── clean_orders.py           cleans orders, engineers features, joins weather
 ├── reports/figures/
 └── requirements.txt
 ```
@@ -90,9 +93,17 @@ correlation heatmap; time by hour of day; rider rating vs time; Zomato cost/rati
 **5 · Evaluation** – R², MAE, RMSE on hold-out + 5-fold CV mean ± std; actual-vs-predicted and residual plots;
 RF feature importance vs Lasso coefficients.
 
+## Cleaning results (`src/clean_orders.py`)
+- Orders are kept from **19 Feb 2022**, the first weather date. The orders have no dates between
+  19 and 28 Feb, so this drops exactly 11–18 Feb: 45,593 → **38,351** orders.
+- 41 rider ratings of 6.0 (all with age 50, i.e. placeholder rows) → treated as missing.
+- Festival calendar added: Maha Shivaratri (1 Mar), Holi (18 Mar), Ugadi/Gudi Padwa (2 Apr).
+- Weather joined on (city, date, hour) → **12,645** orders in Bangalore, Mumbai, Chennai, Pune.
+
 ## Known limitations
-- Weather covers 6 cities (5 overlap with orders, ≈29 % of rows) and starts 19 Feb 2022, so orders from
-  11–18 Feb have no weather match.
+- Weather exists for 6 cities; Delhi has no orders, and all Kolkata orders fall on 11–18 Feb (before the
+  weather data starts), so the modeling set covers 4 cities (≈33 % of the date-filtered orders).
+- Wind gusts are missing for the whole order window and are not used.
 - Daily aggregates in the Feb–Jul export are computed on GMT days.
 - Delivery coordinates in the Kaggle dataset are partially synthetic.
 
@@ -100,4 +111,5 @@ RF feature importance vs Lasso coefficients.
 ```bash
 pip install -r requirements.txt
 python src/merge_weather.py
+python src/clean_orders.py
 ```
