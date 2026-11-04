@@ -1,0 +1,10 @@
+# large / third-party
+*.zip
+data/raw/zomato/
+Swiggy_Data_analysis_Project-main/
+# python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
