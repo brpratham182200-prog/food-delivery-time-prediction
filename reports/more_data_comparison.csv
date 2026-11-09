@@ -1,0 +1,5 @@
+setup,R2,MAE,RMSE
+Linear: 4 cities + weather,0.576,4.869,6.07
+RF: 4 cities + weather,0.813,3.247,4.035
+"Linear: 12 cities, no weather",0.575,4.865,6.074
+"RF: 12 cities, no weather",0.825,3.146,3.895

@@ -137,6 +137,21 @@ chosen with 5-fold `GridSearchCV` on the training set.
   0.813 with them.
 - Residuals are centred on 0 (mean +0.04 min), so the model is not biased up or down.
 
+**Bonus: more data instead of real weather** (Section 9, `reports/more_data_comparison.csv`)
+
+Same 2,529 test orders; training on all 12 cities (35,822 orders) without Open-Meteo columns:
+
+| Setup | R² | MAE (min) | RMSE (min) |
+|---|---|---|---|
+| Linear: 4 cities + weather | 0.576 | 4.87 | 6.07 |
+| RF: 4 cities + weather | 0.813 | 3.25 | 4.04 |
+| Linear: 12 cities, no weather | 0.575 | 4.87 | 6.07 |
+| **RF: 12 cities, no weather** (max_depth=15) | **0.825** | **3.15** | **3.90** |
+
+5-fold CV on all 38,351 orders: R² 0.812 ± 0.003. Dropping two-thirds of the orders to add measured weather cost a
+little accuracy and gained nothing. The gain from 3.5× more data is modest, so most of the remaining error comes from
+information the dataset does not contain (restaurant workload, real routes), not from too few rows.
+
 ![Feature importance](reports/figures/18_rf_importance.png)
 ![Actual vs predicted](reports/figures/16_actual_vs_predicted.png)
 
